@@ -13,6 +13,8 @@ A curated collection of automation scripts, system performance tweaks, hardware 
 | [`optimize-network.sh`](./optimize-network.sh) | Bash Script | Tunes TCP BBR, network buffers, fast open, disables Wi-Fi power save, and configures fast DNS |
 | [`optimize_system.sh`](./optimize_system.sh) | Bash Script | System maintenance: trims swap, cleans Snap/APT cache, vacuums journal logs, runs SSD trim |
 | [`setup-fingerprint.sh`](./setup-fingerprint.sh) | Bash Script | Installs Broadcom ControlVault 3 TOD drivers and enables PAM fingerprint authentication |
+| [`setup-dell-dock.sh`](./setup-dell-dock.sh) | Bash Script | Configures EVDI kernel module and Synaptics DisplayLink driver for Dell D6000 & DisplayLink docks |
+| [`dell-docking-station.md`](./dell-docking-station.md) | Guide (Markdown) | Root cause analysis and step-by-step fix guide for Dell D6000 dock external displays |
 | [`moto_g5s_plus_home_server_guide.md`](./moto_g5s_plus_home_server_guide.md) | Guide (Markdown) | Complete walkthrough to turn a Moto G5s Plus into a 24/7 AdGuard Home DNS & SSH server |
 | [`fix-flickering.txt`](./fix-flickering.txt) | Guide (Text) | Step-by-step troubleshooting guide for laptop screen & brightness flickering in Ubuntu |
 | [`gpt_sol_luna_orchestration.txt`](./gpt_sol_luna_orchestration.txt) | Reference / Prompt | Specification and prompt for multi-agent Codex orchestration architectures |
@@ -124,6 +126,32 @@ sudo ./setup-fingerprint.sh
 To enroll additional fingerprints after installation:
 ```bash
 fprintd-enroll
+```
+
+---
+
+### 5. `setup-dell-dock.sh`
+**Purpose**: Automated installer and configuration manager for DisplayLink drivers and EVDI kernel module for the **Dell Universal Dock D6000** (and compatible DisplayLink USB 3.0/USB-C docks). Solves issues where external displays connected to the dock fail to display image.
+
+#### Key Features:
+- Detects Dell D6000 and DisplayLink USB hardware (`17e9:6006`).
+- Automatically resolves and installs Ubuntu signed EVDI kernel modules (`linux-main-modules-evdi-*` & `linux-modules-evdi-generic`).
+- Fully compatible with UEFI Secure Boot (uses Canonical-signed EVDI kernel module; no manual MOK enrollment required).
+- Configures Synaptics official APT repository keyring and installs `displaylink-driver`.
+- Sets up systemd service auto-start (`displaylink-driver.service`) and udev rules.
+- Diagnostics and status check mode (`--check`).
+- Optional session configuration (`--force-xorg`) to set Xorg as the default display server in GDM.
+
+#### Usage:
+```bash
+# 1. Run full automated setup and installation:
+sudo ./setup-dell-dock.sh
+
+# 2. Check current status of DisplayLink, EVDI, and dock:
+./setup-dell-dock.sh --check
+
+# 3. Configure GDM to default to Xorg session:
+sudo ./setup-dell-dock.sh --force-xorg
 ```
 
 ---
